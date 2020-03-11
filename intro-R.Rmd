@@ -10,6 +10,7 @@ runtime: shiny_prerendered
 ---
 
 ```{r setup, include = FALSE}
+options(tibble.print_min = 5)
 library(learnr)
 knitr::opts_chunk$set(
   echo = FALSE, message = FALSE, warning = FALSE, collapse = TRUE,
@@ -23,10 +24,68 @@ tutorial_html_dependency()
 
 ```r
 library(tidyverse)
+library(lubridate)
+library(glue)
+library(janitor)
 ```
 
 ## R & RStudio
 
 ## Data wrangling and visualisation
+
+```{r read-data}
+data_url <- "https://at.govt.nz/media/1982132/public-transport-patronage-data-january-2020.csv"
+at_data_raw <- read_csv(data_url, skip = 4)
+at_data_raw
+glimpse(at_data_raw)
+```
+
+```{r clean-names}
+at_data_raw %>% 
+  rename_all(make_clean_names)
+```
+
+```{r}
+at_data <- at_data_raw %>% 
+  rename_all(make_clean_names) %>% 
+  mutate(date = dmy(glue("01-{`month_year`}"))) %>%
+  filter(year(date) >= 2006, year(date) < 2020) %>%
+  select(date, total, bus = bus_total, train = train_rapid, ferry)
+```
+
+```{r}
+at_data %>% 
+  ggplot(aes(x = date, y = total)) +
+  geom_line() +
+  geom_point()
+```
+
+```{r}
+at_data %>% 
+  mutate(year = year(date), month = month(date, label = TRUE, abbr = TRUE)) %>% 
+  ggplot(aes(x = month, y = total, group = year, colour = year)) +
+  geom_line() +
+  scale_colour_viridis_c()
+```
+
+```{r}
+at_data %>% 
+  mutate(year = year(date), month = month(date, label = TRUE, abbr = TRUE)) %>% 
+  ggplot(aes(x = year, y = total)) +
+  geom_line() +
+  facet_wrap(~ month)
+```
+
+```{r}
+at_data %>% 
+  pivot_longer(cols = bus:ferry, names_to = "types", values_to = "tallies")
+```
+
+```{r}
+at_data %>% 
+  pivot_longer(cols = bus:ferry, names_to = "service", values_to = "travel") %>% 
+  ggplot(aes(x = date, y = travel, colour = service)) +
+  geom_line()
+```
 
 ## Interactive maps
