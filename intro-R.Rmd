@@ -6,6 +6,8 @@ output:
     css: "css/uoa.css"
     theme: "united"
     highlight: "pygments"
+    progressive: true
+    df_print: paged
 runtime: shiny_prerendered
 ---
 
@@ -16,11 +18,42 @@ knitr::opts_chunk$set(
   echo = TRUE, message = FALSE, warning = FALSE, collapse = TRUE,
   fig.height = 4, fig.width = 8, fig.align = "center", cache = FALSE)
 tutorial_html_dependency()
+
+## need to set up any data frames we want to use here
 ```
 
-## Welcome!
+## Kia ora koutou!
 
-* Today's team
+Welcome to this Introduction to R workshop: Adventu`R`es in `R`
+
+The instructors are:
+
+ + [Anna Fergusson](https://github.com/annafergusson)
+ + [Earo Wang](https://github.com/earowang)
+ + [Lisa Chen](https://unidirectory.auckland.ac.nz/profile/lisa-chen)
+ + [Charlotte Jone-Todd](https://github.com/cmjt)
+ + [Emma Lehrke](https://unidirectory.auckland.ac.nz/profile/emma-wilson)
+
+## Data wrangling & visualisation
+
+### To do
+
+Chunk up the activities, have something at the beginning to recreate, for each chunk focus on one or two key ideas, just to get folks started!
+
+### March madness!!
+
++ Animated gif showing March craziness on the trains, ferries and buses
++ Something to set the context for the exploration
+
+https://at.govt.nz/about-us/reports-publications/at-metro-patronage-report/
+
+### What is this plot and how can we recreate it?
+
+
+
+### Packages
+
+The main packages we'll be using for this part of the workshop are listed below.
 
 ```{r}
 library(tidyverse)
@@ -29,21 +62,30 @@ library(glue)
 library(janitor)
 ```
 
-## R & RStudio
-
-## Data wrangling and visualisation
+### Reading data into R
 
 ```{r read-data}
 data_url <- "https://at.govt.nz/media/1982132/public-transport-patronage-data-january-2020.csv"
 at_data_raw <- read_csv(data_url, skip = 4)
 at_data_raw
+```
+
+
+### Quick look
+
+```{r glimpse-data}
 glimpse(at_data_raw)
 ```
+
+### Easy cleaning
+
 
 ```{r clean-names}
 at_data_raw %>% 
   rename_all(make_clean_names)
 ```
+
+### Some `dplyr` functions
 
 ```{r}
 at_data <- at_data_raw %>% 
@@ -53,12 +95,16 @@ at_data <- at_data_raw %>%
   select(date, total, bus = bus_total, train = train_rapid, ferry)
 ```
 
+### And a plot!
+
 ```{r}
 at_data %>% 
   ggplot(aes(x = date, y = total)) +
   geom_line() +
   geom_point()
 ```
+
+### Nice plots
 
 ```{r}
 at_data %>% 
@@ -68,6 +114,8 @@ at_data %>%
   scale_colour_viridis_c()
 ```
 
+### Even nicer plots
+
 ```{r}
 at_data %>% 
   mutate(year = year(date), month = month(date, label = TRUE, abbr = TRUE)) %>% 
@@ -76,16 +124,46 @@ at_data %>%
   facet_wrap(~ month)
 ```
 
+### Reorganising/restructuring data
+
 ```{r}
 at_data %>% 
-  pivot_longer(cols = bus:ferry, names_to = "types", values_to = "tallies")
+  pivot_longer(cols = bus:ferry, 
+               names_to = "types", 
+               values_to = "tallies")
 ```
 
 ```{r}
 at_data %>% 
-  pivot_longer(cols = bus:ferry, names_to = "service", values_to = "travel") %>% 
+  pivot_longer(cols = bus:ferry, 
+               names_to = "service", 
+               values_to = "travel") %>% 
   ggplot(aes(x = date, y = travel, colour = service)) +
   geom_line()
 ```
 
-## Interactive maps
+### Super plot fun times!
+
+### Want to try later with more data?
+
+Cycle count data here
+
+https://at.govt.nz/cycling-walking/research-monitoring/monthly-cycle-monitoring/
+
+
+## R & RStudio in the cloud
+
+Put the link to the workspace/project here for particpants
+
+Put some more info about how to set up R and RStudio themselves here for reference later
+
+
+## Interactive spatial maps
+
+Could just summarise what this part of the workshop did, with some reference links (but do this part in RStudio Cloud).
+
+## Want to learn more?
+
+Resources etc. for future learning :-)
+
+

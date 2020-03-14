@@ -1,6 +1,7 @@
 .tutorialTitle:before {
   content: url("../images/uoa-square.svg");
   display: block;
+  width: 50%;
 }
 
 body {
