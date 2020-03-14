@@ -1,7 +1,5 @@
 # Planning document
 
-*I've moved what was on here before into the `learnr` page (see intro-R.Rmd)*
-
 Materials for the intro to `R` course at the [Women in Data Science](https://nvite.com/universityofauckland/b7f9f), Auckland.
 
 ## Details of workshop
